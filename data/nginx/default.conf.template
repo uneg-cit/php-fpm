@@ -1,0 +1,97 @@
+upstream php-fpm {
+    server php:9000;
+}
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name localhost;
+    
+    # Directorio raíz para Laravel/PHP moderno
+    root /var/www/html/public;
+    index index.php index.html;
+    
+    # Codificación
+    charset utf-8;
+    
+    # Logs
+    access_log /var/log/nginx/nginx-access.log;
+    error_log /var/log/nginx/nginx-error.log warn;
+    
+    # Gzip compression
+    gzip on;
+    gzip_vary on;
+    gzip_proxied any;
+    gzip_comp_level 6;
+    gzip_types text/plain text/css text/xml application/json application/javascript application/rss+xml application/atom+xml image/svg+xml;
+    
+    # Headers de seguridad
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-XSS-Protection "1; mode=block" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    
+    # Ocultar versión de nginx
+    server_tokens off;
+    
+    # Archivos ocultos y de configuración
+    location ~ /\. {
+        deny all;
+    }
+    
+    location ~ /\.env {
+        deny all;
+    }
+    
+    # Caché para archivos estáticos
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot|otf|pdf|zip|tar|gz|rar)$ {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+        try_files $uri =404;
+    }
+    
+    # Caché para archivos media
+    location ~* \.(mp4|webm|ogv|mp3|ogg|wav|flac|aac)$ {
+        expires 1M;
+        add_header Cache-Control "public";
+        try_files $uri =404;
+    }
+    
+    # Favicon y robots.txt
+    location = /favicon.ico { access_log off; log_not_found off; }
+    location = /robots.txt  { access_log off; log_not_found off; }
+    
+    # Configuración para Laravel
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+    
+    # Manejo de archivos PHP
+    location ~ \.php$ {
+        try_files $uri =404;
+        fastcgi_split_path_info ^(.+\.php)(/.+)$;
+        fastcgi_pass php-fpm;
+        fastcgi_index index.php;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_param PATH_INFO $fastcgi_path_info;
+        
+        # Timeouts y buffers
+        fastcgi_buffering on;
+        fastcgi_buffer_size 128k;
+        fastcgi_buffers 256 16k;
+        fastcgi_busy_buffers_size 256k;
+        fastcgi_temp_file_write_size 256k;
+        fastcgi_read_timeout 300s;
+        fastcgi_send_timeout 300s;
+        fastcgi_connect_timeout 300s;
+        
+        # Parámetros adicionales para Laravel
+        fastcgi_param PHP_VALUE "upload_max_filesize=64M \n post_max_size=64M \n max_execution_time=300 \n memory_limit=256M";
+    }
+    
+    # Redireccionar a HTTPS (descomentar si se usa SSL)
+    # if ($http_x_forwarded_proto != 'https') {
+    #     return 301 https://$host$request_uri;
+    # }
+}
