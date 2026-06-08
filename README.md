@@ -67,3 +67,16 @@ Si los contenedores no inician porque faltan configuraciones:
 ./setup.sh  # Crea las configuraciones desde templates
 docker-compose up -d
 ```
+
+## 📦 Extensiones PHP Instaladas
+
+- curl
+- gd (con freetype/jpeg)
+- mbstring
+- pgsql
+- xml
+- xsl
+- zip
+- pdo_pgsql
+- exif
+- fileinfo
