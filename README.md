@@ -31,15 +31,33 @@ docker-compose logs -f
     ├── nginx/
     │   └── default.conf        # Configuración de Nginx
     ├── php/
-    │   ├── php.ini             # Configuración de PHP
-    │   └── www.conf            # Configuración de PHP-FPM
+    │   └── php.ini             # Configuración de PHP
     └── logs/                   # Logs de ambos servicios
-        ├── nginx-access.log
-        ├── nginx-error.log
-        ├── php-fpm-access.log
-        ├── php-fpm-error.log
-        └── php-error.log
+        ├── nginx/
+        │   ├── nginx-access.log
+        │   └── nginx-error.log
+        └── php/
+            ├── php-error.log
+            ├── php-fpm-access.log
+            ├── php-fpm-error.log
+            └── php-fpm-slow.log
 ```
+
+## 📋 Archivos de Logs
+
+Todos los logs se guardan en subdirectorios separados:
+
+### Nginx
+- `data/logs/nginx/nginx-access.log` - Accesos HTTP
+- `data/logs/nginx/nginx-error.log` - Errores de Nginx
+
+### PHP
+- `data/logs/php/php-error.log` - Errores de PHP
+
+### PHP-FPM
+- `data/logs/php/php-fpm-access.log` - Accesos a PHP-FPM
+- `data/logs/php/php-fpm-error.log` - Errores de PHP-FPM
+- `data/logs/php/php-fpm-slow.log` - Requests lentos (slow log)
 
 ## ⚙️ Configuración
 
@@ -50,9 +68,8 @@ PHP_VERSION=8.2 docker-compose up -d --build
 
 ### Personalizar configuraciones
 Edita los archivos en `data/`:
-- `data/nginx/default.conf` - Virtual host
-- `data/php/php.ini` - Configuración PHP
-- `data/php/www.conf` - Pool PHP-FPM
+- `data/nginx/default.conf` - Virtual host de Nginx
+- `data/php/php.ini` - Configuración de PHP
 
 ### Reiniciar después de cambios
 ```bash

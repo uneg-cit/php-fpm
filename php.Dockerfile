@@ -49,4 +49,16 @@ RUN mkdir -p /var/www/html && \
 
 WORKDIR /var/www/html
 
+# Configurar logs de PHP-FPM
+RUN echo "[global]" > /usr/local/etc/php-fpm.d/docker.conf && \
+    echo "error_log = /var/log/php/php-fpm-error.log" >> /usr/local/etc/php-fpm.d/docker.conf && \
+    echo "" >> /usr/local/etc/php-fpm.d/docker.conf && \
+    echo "[www]" >> /usr/local/etc/php-fpm.d/docker.conf && \
+    echo "access.log = /var/log/php/php-fpm-access.log" >> /usr/local/etc/php-fpm.d/docker.conf && \
+    echo "slowlog = /var/log/php/php-fpm-slow.log" >> /usr/local/etc/php-fpm.d/docker.conf && \
+    echo "request_slowlog_timeout = 10s" >> /usr/local/etc/php-fpm.d/docker.conf && \
+    echo "request_slowlog_trace_depth = 20" >> /usr/local/etc/php-fpm.d/docker.conf && \
+    echo "catch_workers_output = yes" >> /usr/local/etc/php-fpm.d/docker.conf && \
+    echo "decorate_workers_output = no" >> /usr/local/etc/php-fpm.d/docker.conf
+
 # Usar entrypoint por defecto de php-fpm
