@@ -59,6 +59,8 @@ RUN echo "[global]" > /usr/local/etc/php-fpm.d/docker.conf && \
     echo "request_slowlog_timeout = 10s" >> /usr/local/etc/php-fpm.d/docker.conf && \
     echo "request_slowlog_trace_depth = 20" >> /usr/local/etc/php-fpm.d/docker.conf && \
     echo "catch_workers_output = yes" >> /usr/local/etc/php-fpm.d/docker.conf && \
-    echo "decorate_workers_output = no" >> /usr/local/etc/php-fpm.d/docker.conf
+    echo "decorate_workers_output = no" >> /usr/local/etc/php-fpm.d/docker.conf \
+    echo "listen = 0.0.0.0:9000" >> /usr/local/etc/php-fpm.d/www.conf
+
 
 # Usar entrypoint por defecto de php-fpm
